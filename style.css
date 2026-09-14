@@ -1,0 +1,59 @@
+:root {
+  --slidev-theme-primary: #245b47;
+}
+/* Keep Slidev's accessible button labels hidden during first-load CSS generation. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+}
+.slidev-layout {
+  background: #f7f5ef;
+  color: #202d28;
+  padding: 42px 52px;
+  font-size: 21px;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+.slidev-layout h1 {
+  font-size: 35px;
+  line-height: 1.35;
+  letter-spacing: -.045em;
+  font-weight: 750;
+  margin-bottom: 22px;
+}
+.slidev-layout h2 { font-size: 25px; font-weight: 680; margin-bottom: 20px; }
+.slidev-layout p { margin: 12px 0; }
+.slidev-layout strong { color: #245b47; }
+.slidev-layout a { color: #315f85; border-color: #b8c6d2; }
+.slidev-layout th { background: #e7eee6; color: #245b47; font-size: 17px; }
+.slidev-layout td { font-size: 18px; }
+.slidev-layout th, .slidev-layout td { padding: 12px 15px; border-bottom: 1px solid #d7dfd5; }
+.slidev-layout table { margin-top: 24px; }
+.slidev-layout .slidev-code { font-size: 18px !important; line-height: 1.65 !important; }
+.slidev-layout li { margin-bottom: 10px; }
+.slidev-layout.two-cols-header { column-gap: 38px; grid-template-rows: min-content 1fr; }
+.eyebrow { color: #64776c; font-size: 12px; letter-spacing: .16em; margin-bottom: 15px; font-family: Consolas, monospace; }
+.callout { border-left: 4px solid #245b47; background: #e7eee6; padding: 16px 20px; font-size: 21px; line-height: 1.55; }
+.callout.warn { border-color: #a7472e; background: #f8e8dd; }
+.small { font-size: 14px; line-height: 1.7; color: #67716b; }
+.sources { position: absolute; bottom: 21px; left: 52px; right: 52px; border-top: 1px solid #d7dfd5; padding-top: 9px; color: #6c756f; font-size: 10px; line-height: 1.6; }
+.sources a { color: #526f66; }
+.cover-slide { background: #203c30 !important; color: #f4f5ec; }
+.cover-slide h1 { font-size: 60px; line-height: 1.25; letter-spacing: -.055em; }
+.cover-slide p { font-size: 25px; color: #ccdacb; line-height: 1.75; }
+.cover-slide .eyebrow { color: #b7ceb8; }
+.cover-slide .sources { color: #b7c9b9; border-color: #536a58; }
+.slidev-layout.statement { text-align: left; }
+.slidev-layout.statement h1 { font-size: 45px; }
+.references-slide td { font-size: 16px; }
+.references-slide th, .references-slide td { padding: 9px 13px; }
+
+.slidev-layout .comparison-slide td { font-size: 17px; line-height: 1.5; }
+.slidev-layout .comparison-slide th, .slidev-layout .comparison-slide td { padding: 9px 12px; }
+.slidev-layout .comparison-slide .callout { font-size: 19px; padding: 12px 16px; }
+
+.slidev-layout .linux-concepts h2 { font-size: 21px; }
+.slidev-layout .linux-concepts p { font-size: 18px; }
+.slidev-layout .linux-concepts th, .slidev-layout .linux-concepts td { font-size: 16px; padding: 10px 8px; }
+
+.slidev-layout .support-matrix th, .slidev-layout .support-matrix td { font-size: 16px; padding: 7px 10px; line-height: 1.5; }
