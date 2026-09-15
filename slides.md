@@ -881,15 +881,26 @@ title: Claude Cowork Enterprise의 로컬 VM
 <div class="cowork-columns">
 <div>
 
-```mermaid {scale: 0.60, flowchart: {nodeSpacing: 18, rankSpacing: 22}}
-flowchart TB
-    subgraph H["사용자 컴퓨터"]
-        F["허용한 작업 폴더"] <-->|파일 접근| S
-        subgraph VM["Cowork 로컬 VM"]
-            S["Shell · 작업 코드"] --> K["Guest kernel"]
-        end
-    end
-```
+<svg viewBox="0 0 390 320" role="img" aria-label="Claude Desktop 사용자 UI와 허용한 작업 폴더는 사용자 컴퓨터의 VM 밖에 있다. VM 안에서 Shell과 작업 코드가 Guest kernel을 사용한다. Agent harness의 위치는 표시하지 않는다." style="display:block;width:390px;height:320px;max-width:100%">
+<defs><marker id="cowork-file-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#64776c" /></marker></defs>
+<rect x="5" y="5" width="380" height="305" fill="#faf9f5" stroke="#c9d1c9" />
+<text x="22" y="32" style="font-size:17px;fill:#64776c">사용자 컴퓨터</text>
+<rect x="20" y="49" width="200" height="56" fill="#e7eee6" stroke="#48745e" />
+<text x="120" y="72" text-anchor="middle" style="font-size:18px;fill:#202d28">Claude Desktop</text>
+<text x="120" y="94" text-anchor="middle" style="font-size:16px;fill:#202d28">사용자 UI</text>
+<rect x="240" y="49" width="130" height="56" fill="#fff" stroke="#9ba79c" />
+<text x="305" y="72" text-anchor="middle" style="font-size:17px;fill:#202d28">허용한</text>
+<text x="305" y="94" text-anchor="middle" style="font-size:17px;fill:#202d28">작업 폴더</text>
+<path d="M120 108 V135 M305 108 V135" fill="none" stroke="#64776c" stroke-width="1.5" marker-start="url(#cowork-file-arrow)" marker-end="url(#cowork-file-arrow)" />
+<text x="28" y="125" style="font-size:12px;fill:#64776c">요청·결과</text>
+<text x="318" y="125" style="font-size:12px;fill:#64776c">파일 접근</text>
+<rect x="25" y="139" width="340" height="154" fill="#f5f3eb" stroke="#64776c" stroke-width="2" />
+<text x="42" y="164" style="font-size:17px;fill:#64776c">Cowork 로컬 VM</text>
+<rect x="45" y="179" width="300" height="44" fill="#e7eee6" stroke="#48745e" />
+<text x="195" y="207" text-anchor="middle" style="font-size:19px;fill:#202d28">Shell · 작업 코드</text>
+<rect x="45" y="239" width="300" height="36" fill="#e8eef5" stroke="#315f85" />
+<text x="195" y="264" text-anchor="middle" style="font-size:18px;fill:#202d28">Guest kernel</text>
+</svg>
 
 </div>
 <div class="comparison-slide">
@@ -910,7 +921,7 @@ flowchart TB
 .cowork-columns .comparison-slide th, .cowork-columns .comparison-slide td { padding: 12px 10px; }
 </style>
 
-<div class="sources">2026-09-15 Enterprise 문서의 로컬 세션 기준. 개념도이며 모델 추론 경로는 생략. microVM 여부·하이퍼바이저 종류는 단정하지 않는다. <a href="https://support.claude.com/en/articles/13455879-use-claude-cowork-on-team-and-enterprise-plans">Cowork: Enterprise 실행 위치·관리자 설정</a> · <a href="https://claude.com/docs/third-party/claude-desktop/overview">Desktop: 로컬 VM·파일 접근 범위</a></div>
+<div class="sources">2026-09-15 Enterprise 문서의 로컬 세션 기준. 코드 실행 경계의 개념도. Agent harness의 위치·microVM 여부·하이퍼바이저 종류는 단정하지 않는다. <a href="https://support.claude.com/en/articles/13455879-use-claude-cowork-on-team-and-enterprise-plans">Cowork: Enterprise 실행 위치·관리자 설정</a> · <a href="https://claude.com/docs/third-party/claude-desktop/overview">Desktop: 로컬 VM·파일 접근 범위</a></div>
 
 ---
 title: Coding agent의 Sandbox 구축 흐름
