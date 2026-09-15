@@ -4,7 +4,7 @@ title: 실행의 경계 — Coding Agent Sandbox
 titleTemplate: '%s'
 info: 'Coding agent에서 Sandbox를 구축하고 실행 경로에 연결하는 방법'
 author: ''
-keywords: sandbox, coding agent, Windows, Linux, Codex, Claude Code, OpenCode
+keywords: sandbox, coding agent, Windows, Linux, Codex, Claude Code, OpenCode, Gemini CLI, Podman, microVM, Claude Cowork
 class: cover-slide
 layout: cover
 colorSchema: light
@@ -733,7 +733,7 @@ title: Container로 실행 환경 구성
 <div class="comparison-slide">
 <div class="eyebrow">20 / CONTAINER</div>
 
-# Container: Agent와 도구를 한 실행 환경에 둔다
+# Container 구성: 일반 Docker·Podman
 
 <svg viewBox="0 0 900 360" role="img" aria-label="실행 플랫폼이 Container runtime으로 환경을 만들며 Container 안에 Agent harness와 Shell 및 Python이 함께 실행되는 구성" style="width:100%;height:330px">
 <defs><marker id="ctr-launch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#64776c" /></marker></defs>
@@ -753,13 +753,66 @@ title: Container로 실행 환경 구성
 <rect x="10" y="308" width="880" height="43" fill="#e8eef5" stroke="#315f85" /><text x="450.0" y="335.5" text-anchor="middle" style="font-size:19px;fill:#202d28">Host kernel · Container 안팎의 Process가 함께 사용</text>
 </svg>
 
-<div class="sources">Agent를 Container 안에서 실행하는 일반 Linux 구성. Runtime이 Container를 생성하고 Agent를 시작한다. Windows에서 Linux container를 실행하면 Linux VM의 kernel을 사용한다. <a href="https://docs.docker.com/engine/containers/run/">실행 구성</a> · <a href="https://docs.docker.com/engine/security/">OS 기반 격리</a> · <a href="https://docs.docker.com/desktop/features/wsl/">Windows의 Linux container</a></div>
+<div class="small mt-2">② Container 기반 격리 · Agent와 도구를 같은 환경에 배치하고, 실행 기반의 Linux kernel을 공유한다.</div>
+
+<div class="sources">일반 Linux container 구성. Windows·macOS의 Linux VM 위에서도 각 container는 그 Linux kernel을 공유한다. Docker Sandboxes 제품과 구분. <a href="https://docs.docker.com/engine/security/">Docker Engine</a> · <a href="https://docs.podman.io/en/latest/markdown/podman.1.html">Podman</a> · <a href="https://docs.podman.io/en/latest/markdown/podman-machine.1.html">Podman machine</a></div>
 </div>
+
+---
+title: Gemini CLI의 Podman Container Sandbox
+---
+<div class="eyebrow">21 / CASE · CONTAINER</div>
+
+# Gemini CLI: Podman Container Sandbox
+
+<div class="small mb-3">Linux의 일반 OCI runtime 기준. 아래는 CLI 전체를 격리하는 설정 예시.</div>
+
+```json
+{ "tools": { "sandbox": "podman" },
+  "security": { "toolSandboxing": false } }
+```
+
+<div class="comparison-slide">
+
+| 연결 단계 | 구성 |
+| --- | --- |
+| 실행 요청 | Gemini CLI가 Podman을 Sandbox 실행 도구로 선택 |
+| 환경 준비 | Container image로 실행 환경을 구성 |
+| 작업 파일 | 현재 workspace를 container 안의 같은 절대 경로에 mount |
+| 격리 경계 | Linux kernel 공유 · Process·파일시스템·Network를 분리 |
+
+</div>
+
+<div class="sources">2026-09-15 확인. Gemini CLI·Podman 설치 필요. .gemini/settings.json 예시이며 변경 후 CLI 재시작. Tool 단위 격리와 CLI 전체 격리는 설정으로 구분한다. <a href="https://geminicli.com/docs/cli/sandbox/">Gemini CLI: Sandboxing</a> · <a href="https://docs.podman.io/en/latest/markdown/podman-run.1.html">Podman: 실행 환경</a></div>
+
+---
+title: 범용 VM과 microVM의 차이
+---
+<div class="eyebrow">22 / VM · MICROVM</div>
+
+# 범용 VM과 microVM의 차이
+
+<div class="callout">microVM도 ③ VM 기반 격리에 속한다.<br>둘 다 Guest kernel을 두고 가상화 경계로 Host와 분리한다.</div>
+
+<div class="comparison-slide">
+
+| 비교 | 범용 VM | microVM · Firecracker 예 |
+| --- | --- | --- |
+| 설계 목표 | 다양한 OS·장치·범용 작업 지원 | 제한된 workload를 빠르고 가볍게 실행 |
+| 가상 장치 | 폭넓은 장치 모델·기능 제공 | 필요한 장치와 기능만 제공 |
+| 시작·메모리 비용 | 폭넓은 기능을 수용하는 구성 | 장치·부팅 경로를 줄여 비용 절감 |
+| Kernel 경계 | 별도 Guest kernel | 별도 Guest kernel |
+
+</div>
+
+<div class="small mt-3">microVM은 경량화를 지향하는 VM 설계다. 고정된 크기·속도 기준은 없으며, 성능은 구현과 workload에 따라 달라진다.</div>
+
+<div class="sources">Firecracker의 최소 장치 모델과 범용 QEMU 비교를 바탕으로 설명. Docker Sandboxes·Cowork가 Firecracker를 쓴다는 의미는 아니다. <a href="https://firecracker-microvm.github.io/">Firecracker: How it works · FAQ</a></div>
 
 ---
 title: Docker Sandboxes의 microVM 구현
 ---
-<div class="eyebrow">21 / CASE · VM + CONTAINER</div>
+<div class="eyebrow">23 / CASE · VM ISOLATION</div>
 
 # Docker Sandboxes: Agent를 microVM 안에서 실행한다
 
@@ -775,16 +828,47 @@ flowchart LR
     VM --> N["Network proxy"]
 ```
 
-<div class="callout mt-5">Agent가 VM 안에서 container를 만들고 실행한다.<br>Host의 Docker daemon을 공유할 필요가 없다.</div>
+<div class="callout mt-5">Host와의 격리 경계는 전용 microVM이다.<br>VM 내부의 Docker daemon으로 개발·테스트용 container를 실행한다.</div>
 
-<div class="small mt-4">일반 Docker container와 Docker Sandboxes 제품을 구분한다. 공유 workspace·network는 별도 통제 대상이다.</div>
+<div class="small mt-4">③ VM 기반 격리 · Host Docker daemon을 공유하지 않는다. 연결한 workspace·network는 별도 통제 대상이다.</div>
 
-<div class="sources"><a href="https://docs.docker.com/ai/sandboxes/architecture/">Docker Sandboxes: Architecture</a> · <a href="https://docs.docker.com/ai/sandboxes/security/isolation/">Isolation layers</a></div>
+<div class="sources">2026-09-15 확인. Workspace를 연결한 구성을 표시. <a href="https://docs.docker.com/ai/sandboxes/architecture/">Docker Sandboxes: Architecture</a> · <a href="https://docs.docker.com/ai/sandboxes/security/isolation/">Isolation layers</a></div>
+
+---
+title: Claude Cowork Enterprise의 로컬 VM
+---
+<div class="eyebrow">24 / CASE · VM ISOLATION</div>
+
+# Claude Cowork: Enterprise의 로컬 VM
+
+<div class="small mb-3">③ VM 기반 격리 · 사용자 컴퓨터의 격리된 VM 안에서 코드·Shell을 실행한다.</div>
+
+```mermaid {scale: 0.75}
+flowchart LR
+    subgraph H["사용자 컴퓨터"]
+        F["허용한 작업 폴더"] <-->|파일 접근| S
+        subgraph VM["Cowork 로컬 VM"]
+            S["Shell · 작업 코드"] --> K["Guest kernel"]
+        end
+    end
+```
+
+<div class="comparison-slide">
+
+| 경계 | 확인할 내용 |
+| --- | --- |
+| 실행 격리 | VM으로 코드 실행 환경을 Host와 분리 |
+| 파일 연결 | 허용한 폴더는 작업 대상 · VM 격리와 별도로 범위 통제 |
+| Enterprise 설정 | 클라우드 실행은 기본 Off · 관리자 활성화와 역할 부여 필요 |
+
+</div>
+
+<div class="sources">2026-09-15 Enterprise 문서의 로컬 세션 기준. 개념도이며 모델 추론 경로는 생략. microVM 여부·하이퍼바이저 종류는 단정하지 않는다. <a href="https://support.claude.com/en/articles/13455879-use-claude-cowork-on-team-and-enterprise-plans">Cowork: Enterprise 실행 위치·관리자 설정</a> · <a href="https://claude.com/docs/third-party/claude-desktop/overview">Desktop: 로컬 VM·파일 접근 범위</a></div>
 
 ---
 title: Coding agent의 Sandbox 구축 흐름
 ---
-<div class="eyebrow">22 / RECAP</div>
+<div class="eyebrow">25 / RECAP</div>
 
 # Sandbox 구축은 실행 경로를 연결하는 일이다
 
@@ -893,7 +977,26 @@ class: references-slide
 | [OpenCode V2 · Permissions](https://opencode.ai/v2/docs/permissions) | 도구 권한과 host shell 실행 권한 |
 | [Docker Sandboxes · Architecture](https://docs.docker.com/ai/sandboxes/architecture/) | microVM·workspace·network·전용 daemon |
 
-<div class="small mt-6">확인일: <strong>2026.09.13</strong>. 문서 기반 자료이며 특정 제품 버전의 실행 결과를 재현한 자료는 아니다.<br>runtime은 확인일의 main README를 참조했으며 릴리스·커밋에 고정하지 않았다.<br>구조도·접근 결과·의사 코드는 설명용 예시다.</div>
+<div class="small mt-6">기존 자료 확인일: <strong>2026.09.13</strong> · Docker Sandboxes 재확인: <strong>2026.09.15</strong>.<br>문서 기반 자료이며 특정 제품 버전의 실행 결과를 재현한 자료는 아니다.<br>runtime은 확인일의 main README를 참조했으며 릴리스·커밋에 고정하지 않았다. 구조도·접근 결과·의사 코드는 설명용 예시다.</div>
+
+---
+title: Container와 VM 사례 추가 출처
+class: references-slide
+---
+<div class="eyebrow">REFERENCES / CONTAINER · VM</div>
+
+# Container와 VM 사례의 근거
+
+| 자료 | 확인한 내용 |
+| --- | --- |
+| [Gemini CLI · Sandboxing](https://geminicli.com/docs/cli/sandbox/) | Podman 선택·workspace mount·Tool 단위와 CLI 전체 격리 |
+| [Podman · Run](https://docs.podman.io/en/latest/markdown/podman-run.1.html) | Container Process·파일시스템·Network 구성 |
+| [Podman · Machine](https://docs.podman.io/en/latest/markdown/podman-machine.1.html) | Windows·macOS에서 사용하는 Linux VM |
+| [Firecracker · 공식 문서](https://firecracker-microvm.github.io/) | microVM의 최소 장치 모델·범용 VMM과의 차이 |
+| [Cowork · Enterprise](https://support.claude.com/en/articles/13455879-use-claude-cowork-on-team-and-enterprise-plans) | 로컬 VM·클라우드 실행의 기본값·관리자 권한 |
+| [Claude Desktop · 3P 구조](https://claude.com/docs/third-party/claude-desktop/overview) | Standard·3P의 로컬 VM과 파일 접근 범위 |
+
+<div class="small mt-5">추가 자료 확인일: <strong>2026.09.15</strong>. Gemini CLI 설정은 문서 기반 예시이며 실행 재현 결과가 아니다.<br>Cowork는 Enterprise의 로컬 세션을 다룬다. 3P 배포와 일반 Enterprise 구독의 설정·추론 경로는 구분한다.</div>
 
 ---
 title: OS 기술 참고자료
