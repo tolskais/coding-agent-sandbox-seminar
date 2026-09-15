@@ -786,9 +786,44 @@ title: Gemini CLI의 Podman Container Sandbox
 <div class="sources">2026-09-15 확인. Gemini CLI·Podman 설치 필요. .gemini/settings.json 예시이며 변경 후 CLI 재시작. Tool 단위 격리와 CLI 전체 격리는 설정으로 구분한다. <a href="https://geminicli.com/docs/cli/sandbox/">Gemini CLI: Sandboxing</a> · <a href="https://docs.podman.io/en/latest/markdown/podman-run.1.html">Podman: 실행 환경</a></div>
 
 ---
+title: VM으로 실행 환경 구성
+---
+<div class="eyebrow">22 / VM</div>
+
+# VM: Guest kernel을 포함한 실행 환경을 만든다
+
+<svg viewBox="0 0 960 350" role="img" aria-label="Host의 실행 플랫폼이 가상화 계층으로 VM을 준비한다. VM 안에서 Agent와 도구가 Guest kernel을 사용하며, 작업 폴더는 별도로 연결한다." style="width:100%;height:330px">
+<defs><marker id="vm-launch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#64776c" /></marker></defs>
+<text x="15" y="24" style="font-size:18px;fill:#64776c">Host · 사용자 컴퓨터 또는 서버</text>
+<rect x="425" y="8" width="520" height="255" fill="#f5f3eb" stroke="#64776c" stroke-width="2" />
+<text x="445" y="35" style="font-size:20px;fill:#64776c">VM · 독립된 Guest OS</text>
+<rect x="15" y="55" width="210" height="52" fill="#e7eee6" stroke="#48745e" />
+<text x="120" y="88" text-anchor="middle" style="font-size:20px;fill:#202d28">실행 플랫폼</text>
+<path d="M225 81 H442" fill="none" stroke="#64776c" stroke-width="1.5" marker-end="url(#vm-launch)" />
+<text x="334" y="67" text-anchor="middle" style="font-size:16px;fill:#64776c">부팅 후 Agent 시작</text>
+<rect x="445" y="55" width="480" height="52" fill="#e7eee6" stroke="#48745e" />
+<text x="685" y="88" text-anchor="middle" style="font-size:20px;fill:#202d28">Agent harness → Shell / Python</text>
+<rect x="15" y="133" width="210" height="52" fill="#fff" stroke="#9ba79c" />
+<text x="120" y="166" text-anchor="middle" style="font-size:19px;fill:#202d28">Host 작업 폴더</text>
+<path d="M225 159 H442" fill="none" stroke="#64776c" stroke-width="1.5" marker-end="url(#vm-launch)" />
+<text x="334" y="145" text-anchor="middle" style="font-size:16px;fill:#64776c">허용한 경로만 연결</text>
+<rect x="445" y="133" width="480" height="52" fill="#fff" stroke="#9ba79c" />
+<text x="685" y="166" text-anchor="middle" style="font-size:18px;fill:#202d28">Guest 파일시스템 · 도구 / 코드 / 작업 파일</text>
+<rect x="445" y="206" width="480" height="40" fill="#e8eef5" stroke="#315f85" />
+<text x="685" y="233" text-anchor="middle" style="font-size:19px;fill:#202d28">Guest kernel · VM 내부의 Process가 사용</text>
+<path d="M685 263 V284" fill="none" stroke="#64776c" stroke-width="1.5" marker-end="url(#vm-launch)" />
+<rect x="15" y="287" width="930" height="50" fill="#e8eef5" stroke="#315f85" />
+<text x="480" y="319" text-anchor="middle" style="font-size:19px;fill:#202d28">가상화 계층 · 가상 CPU / 메모리 / 장치 제공 · Host 자원 접근 중재</text>
+</svg>
+
+<div class="small mt-2">준비: 가상 자원·디스크 구성 → Guest kernel 부팅 → Agent 시작. 공유 폴더·Network는 별도로 연결·통제한다.</div>
+
+<div class="sources">Agent 전체를 VM 안에서 실행하는 구성 예. 가상화 계층은 VMM과 플랫폼 가상화 기능을 묶어 표시. 폴더 공유 방식은 구현마다 다르다. <a href="https://www.qemu.org/docs/master/system/introduction.html">QEMU: Guest OS·가상 자원·부팅</a> · <a href="https://docs.docker.com/ai/sandboxes/architecture/">Sandbox의 Workspace 연결 예</a></div>
+
+---
 title: 범용 VM과 microVM의 차이
 ---
-<div class="eyebrow">22 / VM · MICROVM</div>
+<div class="eyebrow">23 / VM · MICROVM</div>
 
 # 범용 VM과 microVM의 차이
 
@@ -812,7 +847,7 @@ title: 범용 VM과 microVM의 차이
 ---
 title: Docker Sandboxes의 microVM 구현
 ---
-<div class="eyebrow">23 / CASE · VM ISOLATION</div>
+<div class="eyebrow">24 / CASE · VM ISOLATION</div>
 
 # Docker Sandboxes: Agent를 microVM 안에서 실행한다
 
@@ -837,14 +872,17 @@ flowchart LR
 ---
 title: Claude Cowork Enterprise의 로컬 VM
 ---
-<div class="eyebrow">24 / CASE · VM ISOLATION</div>
+<div class="eyebrow">25 / CASE · VM ISOLATION</div>
 
 # Claude Cowork: Enterprise의 로컬 VM
 
 <div class="small mb-3">③ VM 기반 격리 · 사용자 컴퓨터의 격리된 VM 안에서 코드·Shell을 실행한다.</div>
 
-```mermaid {scale: 0.75}
-flowchart LR
+<div class="cowork-columns">
+<div>
+
+```mermaid {scale: 0.60, flowchart: {nodeSpacing: 18, rankSpacing: 22}}
+flowchart TB
     subgraph H["사용자 컴퓨터"]
         F["허용한 작업 폴더"] <-->|파일 접근| S
         subgraph VM["Cowork 로컬 VM"]
@@ -853,22 +891,31 @@ flowchart LR
     end
 ```
 
+</div>
 <div class="comparison-slide">
 
 | 경계 | 확인할 내용 |
 | --- | --- |
-| 실행 격리 | VM으로 코드 실행 환경을 Host와 분리 |
-| 파일 연결 | 허용한 폴더는 작업 대상 · VM 격리와 별도로 범위 통제 |
-| Enterprise 설정 | 클라우드 실행은 기본 Off · 관리자 활성화와 역할 부여 필요 |
+| 실행 격리 | 별도 Guest kernel을 가진 VM에서 실행 |
+| 파일 연결 | 허용한 폴더에 접근<br>연결 범위는 별도로 통제 |
+| Enterprise 설정 | 클라우드 실행 기본 Off<br>관리자 활성화·역할 부여 필요 |
 
 </div>
+</div>
+
+<style>
+.cowork-columns { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 18px; }
+.cowork-columns .comparison-slide table { margin-top: 0; width: 100%; }
+.cowork-columns .comparison-slide th:first-child, .cowork-columns .comparison-slide td:first-child { width: 126px; }
+.cowork-columns .comparison-slide th, .cowork-columns .comparison-slide td { padding: 12px 10px; }
+</style>
 
 <div class="sources">2026-09-15 Enterprise 문서의 로컬 세션 기준. 개념도이며 모델 추론 경로는 생략. microVM 여부·하이퍼바이저 종류는 단정하지 않는다. <a href="https://support.claude.com/en/articles/13455879-use-claude-cowork-on-team-and-enterprise-plans">Cowork: Enterprise 실행 위치·관리자 설정</a> · <a href="https://claude.com/docs/third-party/claude-desktop/overview">Desktop: 로컬 VM·파일 접근 범위</a></div>
 
 ---
 title: Coding agent의 Sandbox 구축 흐름
 ---
-<div class="eyebrow">25 / RECAP</div>
+<div class="eyebrow">26 / RECAP</div>
 
 # Sandbox 구축은 실행 경로를 연결하는 일이다
 
